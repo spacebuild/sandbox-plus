@@ -9,10 +9,10 @@
 @inherits Panel
 @attribute [StyleSheet]
 
-<root>
-	<VirtualScrollPanel @ref=Canvas class="canvas" />
-	<DynShapeMaker OnCreateClicked=@SpawnShape OnUpdatePreview=@UpdatePreview TextureSize:bind=@TextureSize />
-	<ScenePanel @ref=previewScenePanel class="spawnicon" />
+<root class="DynSpawnShapeMenu">
+	<VirtualScrollPanel @ref="Canvas" class="dynshapecanvas"/>
+	<DynShapeMaker OnCreateClicked=@SpawnShape OnUpdatePreview=@UpdatePreview TextureSize:bind=@TextureSize/>
+	<ScenePanel @ref="previewScenePanel" class="spawnicon"/>
 </root>
 
 @code {
@@ -29,7 +29,8 @@
 	private VirtualScrollPanel Canvas;
 	private HashSet<DynShapeDimensions> shapes = new();
 
-	[Event( "sandbox.hud.loaded" )]
+	// todo: this doesn't work anymore
+	//[Event( "sandbox.hud.loaded" )]
 	public static void Initialize()
 	{
 		Log.Info( "DynShapeSpawnMenu created" );
@@ -41,15 +42,18 @@
 	protected override void OnAfterTreeRender(bool firstTime)
 	{
 		base.OnAfterTreeRender(firstTime);
-
+	
 		if (firstTime) {
+			// Tabs.AddButtonActive( "prefabs", b => PrefabsPanel.SetClass( "active", b ) );
+			// Tabs.AddButtonActive( "creator", b => CreatorPanel.SetClass( "active", b ) );
+			
 			SetupCanvas();
 		}
 	}
 	
 	private void SetupCanvas()
 	{
-		Canvas.Layout.Columns = 16;
+		Canvas.Layout.AutoColumns = true;
 		Canvas.Layout.ItemWidth = 64;
 		Canvas.Layout.ItemHeight = 64;
 		Canvas.OnCreateCell = ( cell, data ) =>
@@ -83,6 +87,7 @@
 		btn.AddEventListener( "onclick", () =>
 			SpawnShape( shape )
 		);
+		Log.Info($"added button {GetShapeButtonLabel(shape)}");
 		return btn;
 	}
 	private string GetShapeButtonLabel( DynShapeDimensions shape )

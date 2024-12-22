@@ -24,7 +24,7 @@ namespace Sandbox
 			var mesh = new Mesh( Material.Load( "materials/default/vertex_color.vmat" ) );
 
 			mesh.CreateVertexBuffer<MeshVertex>( vertexBuilder.vertices.Count, MeshVertex.Layout, vertexBuilder.vertices.ToArray() );
-			mesh.SetBounds( mins, maxs );
+			mesh.Bounds = new BBox( mins, maxs );
 			GenerateIndices( mesh, vertexBuilder.vertices.Count );
 
 			var modelBuilder = new ModelBuilder();
@@ -49,28 +49,39 @@ namespace Sandbox
 			mesh.CreateIndexBuffer( indices.Count, indices.ToArray() );
 		}
 
-		[ConCmd.Server( "spawn_dynplate" )]
+		[ConCmd( "spawn_dynplate" )]
 		public static void SpawnPlate( float length, float width, float height, int texSize = 100 )
 		{
-			if ( ConsoleSystem.Caller == null )
-				return;
 			var modelId = CreateRectangle( length, width, height, texSize );
 			var entity = SpawnEntity( modelId );
-			SandboxPlayer pawn = ConsoleSystem.Caller.Pawn as SandboxPlayer;
-			TraceResult trace = Trace.Ray( pawn.EyePosition, pawn.EyePosition + pawn.EyeRotation.Forward * 5000.0f ).UseHitboxes().Ignore( pawn ).Run();
+			Player player = Player.FindLocalPlayer();
+			GameObject pawn = player.Controller.GameObject;
+			Transform eye = player.EyeTransform;
+			SceneTraceResult trace = pawn.Scene.Trace.Ray(eye.Position, eye.Position + eye.Forward * 5000.0f ).UseHitboxes().IgnoreGameObject(pawn).Run();
 
-			entity.Position = trace.EndPosition + trace.Normal;
-			Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
+			entity.WorldPosition = trace.EndPosition + trace.Normal;
+			// Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
 		}
 
-		public static MeshEntity SpawnEntity( string modelId )
+		public static GameObject SpawnEntity( string modelId )
 		{
-			MeshEntity entity = new() { ModelId = modelId };
-			entity.Tick();
+			GameObject entity = new() {};
+			var renderer = entity.AddComponent<Prop>();
+			renderer.Model = Models[modelId];
+			
+			var helper = entity.AddComponent<PropHelper>();
+			helper.Invincible = true;
+			
+			entity.Tags.Add( "solid" );
+
+			entity.NetworkSpawn();
+			entity.Network.SetOrphanedMode( NetworkOrphaned.Host );
+			// Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
+			
 			return entity;
 		}
 
-		[ClientRpc]
+		[Rpc.Owner]
 		public static void CreateRectangleClient( float length, float width, float height, int texSize )
 		{
 			CreateRectangleModel( length, width, height, texSize );

@@ -6,7 +6,9 @@
     <div class="inner">
         @if (!string.IsNullOrEmpty(Label))
         {
-            <label style="font-size: 18px; margin-bottom: 5px;">@Label</label>
+	        <div>
+		        <label style="font-size: 18px; margin-bottom: 5px;">@Label</label>
+		    </div>
         }
         @if (ShowRange)
         {
@@ -80,12 +82,14 @@
     private Panel ThumbPanel { get; set; }
     private TextEntry TextEntryPanel { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync()
     {
-        if (Convar != "")
+	    if (Convar != "")
         {
             Value = float.Parse(ConsoleSystem.GetValue(Convar, Min.ToString()));
         }
+
+	    return System.Threading.Tasks.Task.CompletedTask;
     }
 
     /// <summary>
@@ -168,6 +172,7 @@ Slider {
             pointer-events: none;
             font-size: 14px;
             color: #aaa;
+	        height: 14px;
 
             > .left {
                 flex-grow: 1;
@@ -184,7 +189,7 @@ Slider {
             > .track-active {
                 background-color: #fff;
                 position: absolute;
-                height: 100%;
+                height: 7px;
                 left: 0px;
                 border-radius: 4px;
             }
@@ -195,6 +200,7 @@ Slider {
                 width: 16px;
                 height: 16px;
                 transform: translateX(-50%);
+	            position: relative;
             }
         }
     }

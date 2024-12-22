@@ -201,7 +201,7 @@ namespace Sandbox
 			var mesh = new Mesh( Material.Load( "materials/default/vertex_color.vmat" ) );
 
 			mesh.CreateVertexBuffer<MeshVertex>( vertexBuilder.vertices.Count, MeshVertex.Layout, vertexBuilder.vertices.ToArray() );
-			mesh.SetBounds( mins, maxs );
+			mesh.Bounds = new BBox(mins, maxs);
 			GenerateIndices( mesh, vertexBuilder.vertices.Count );
 
 			var modelBuilder = new ModelBuilder();
@@ -218,7 +218,7 @@ namespace Sandbox
 			return key;
 		}
 
-		[ClientRpc]
+		[Rpc.Owner]
 		public static void CreateGearModelClient( float radius, float depth, int numTeeth /* = 16*/, float cutDepth /* = 0.1f*/, float cutAngle /* = 5f*/, int texSize /* = 64*/ )
 		{
 			CreateGearModel( radius, depth, numTeeth, cutDepth, cutAngle, texSize );
@@ -229,20 +229,18 @@ namespace Sandbox
 			return CreateGearModel( radius, depth, numTeeth, cutDepth, cutAngle, texSize );
 		}
 
-		[ConCmd.Server( "spawn_dyngear" )]
-		public static void SpawnGear( float radius, float depth, int numTeeth /* = 16*/, float cutDepth /* = 0.1f*/, float cutAngle /* = 5f*/, int texScale = 100 )
+		[ConCmd( "spawn_dyngear" )]
+		public static void SpawnGear( float radius, float depth, int numTeeth = 16, float cutDepth = 0.1f, float cutAngle = 5f, int texScale = 100 )
 		{
-			if ( ConsoleSystem.Caller == null )
-				return;
-
 			var modelId = CreateGear( radius, depth, numTeeth, cutDepth, cutAngle, texScale );
-
 			var entity = SpawnEntity( modelId );
-			SandboxPlayer pawn = ConsoleSystem.Caller.Pawn as SandboxPlayer;
-			TraceResult trace = Trace.Ray( pawn.EyePosition, pawn.EyePosition + pawn.EyeRotation.Forward * 5000.0f ).UseHitboxes().Ignore( pawn ).Run();
+			Player player = Player.FindLocalPlayer();
+			GameObject pawn = player.Controller.GameObject;
+			Transform eye = player.EyeTransform;
+			SceneTraceResult trace = pawn.Scene.Trace.Ray(eye.Position, eye.Position + eye.Forward * 5000.0f ).UseHitboxes().IgnoreGameObject(pawn).Run();
 
-			entity.Position = trace.EndPosition + trace.Normal;
-			Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
+			entity.WorldPosition = trace.EndPosition + trace.Normal;
+			// Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
 		}
 	}
 }

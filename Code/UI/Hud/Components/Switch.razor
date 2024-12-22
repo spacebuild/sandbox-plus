@@ -45,12 +45,14 @@
         }
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync()
     {
-        if (Convar != "")
+	    if (Convar != "")
         {
             Value = ConsoleSystem.GetValue(Convar, "0") != "0";
         }
+
+	    return System.Threading.Tasks.Task.CompletedTask;
     }
 
     protected override void OnMouseDown( MousePanelEvent e )

@@ -1,5 +1,6 @@
 @using Sandbox.UI
 @using Sandbox.UI.Construct
+@* @using Sandbox.UI.Hud.Components.Left *@
 
 @inherits Panel
 
@@ -12,6 +13,10 @@
     readonly Panel toollist;
 
     private static ModelList modelList;
+    
+    public Panel ToolPanel { get; private set; }
+    public ButtonGroup SpawnMenuLeftTabs  { get; private set; }
+    public Panel SpawnMenuLeftBody { get; private set; }
 
     private bool isSearching;
 
@@ -23,8 +28,10 @@
         {
             var tabs = left.AddChild<ButtonGroup>();
             tabs.AddClass("tabs");
+            SpawnMenuLeftTabs = tabs;
 
             var body = left.Add.Panel("body");
+            SpawnMenuLeftBody = body;
             {
                 modelList = body.AddChild<ModelList>();
                 tabs.SelectedButton = tabs.AddButtonActive("#spawnmenu.modellist", (b) => modelList.SetClass("active", b));
@@ -37,6 +44,9 @@
 
                 var props = body.AddChild<SpawnList>();
                 tabs.AddButtonActive("#spawnmenu.props", (b) => props.SetClass("active", b));
+
+                // todo: remove this when the "sandbox.hud.loaded" event works again
+                DynShapeSpawnMenu.Initialize();
             }
         }
 
@@ -55,7 +65,7 @@
                     RebuildToolList();
                 }
 
-                body.Add.Panel("inspector");
+                ToolPanel = body.Add.Panel("inspector");
             }
         }
     }

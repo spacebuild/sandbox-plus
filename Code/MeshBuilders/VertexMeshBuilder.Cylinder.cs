@@ -106,7 +106,7 @@ namespace Sandbox
 			var mesh = new Mesh( Material.Load( "materials/default/vertex_color.vmat" ) );
 		
 			mesh.CreateVertexBuffer<MeshVertex>( vertexBuilder.vertices.Count, MeshVertex.Layout, vertexBuilder.vertices.ToArray() );
-			mesh.SetBounds( mins, maxs );
+			mesh.Bounds = new BBox(mins, maxs);
 			GenerateIndices( mesh, vertexBuilder.vertices.Count );
 
 			var modelBuilder = new ModelBuilder();
@@ -122,7 +122,7 @@ namespace Sandbox
 			return key;
 		}
 
-		[ClientRpc]
+		[Rpc.Owner]
 		public static void CreateCylinderModelClient( float radius, float depth, int numFaces, int texSize/* = 64*/ )
 		{
 			CreateCylinderModel(radius, depth, numFaces, texSize);
@@ -133,20 +133,18 @@ namespace Sandbox
 			return CreateCylinderModel( radius, depth, numFaces, texSize );
 		}
 		
-		[ConCmd.Server( "spawn_dyncylinder" )]
+		[ConCmd( "spawn_dyncylinder" )]
 		public static void SpawnCylinder( float radius, float depth, int numFaces = 16, int texScale = 100 )
 		{
-			if ( ConsoleSystem.Caller == null )
-				return;
-			
 			var modelId = CreateCylinder(radius, depth, numFaces, texScale);
 			
 			var entity = SpawnEntity( modelId );
-			SandboxPlayer pawn = ConsoleSystem.Caller.Pawn as SandboxPlayer;
-			TraceResult trace = Trace.Ray( pawn.EyePosition, pawn.EyePosition + pawn.EyeRotation.Forward * 5000.0f ).UseHitboxes().Ignore( pawn ).Run();
-
-			entity.Position = trace.EndPosition + trace.Normal;
-			Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
+			Player player = Player.FindLocalPlayer();
+			GameObject pawn = player.Controller.GameObject;
+			Transform eye = player.EyeTransform;
+			SceneTraceResult trace = pawn.Scene.Trace.Ray(eye.Position, eye.Position + eye.Forward * 5000.0f ).UseHitboxes().IgnoreGameObject(pawn).Run();
+			entity.WorldPosition = trace.EndPosition + trace.Normal;
+			// Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
 		}
 	}
 }

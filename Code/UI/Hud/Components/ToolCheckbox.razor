@@ -24,12 +24,14 @@
 
     public bool Value = false;
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync()
     {
-        if (Convar != "")
+	    if (Convar != "")
         {
             Value = ConsoleSystem.GetValue(Convar, "0") != "0";
         }
+
+	    return Task.CompletedTask;
     }
 
     public virtual void OnValueChanged( )

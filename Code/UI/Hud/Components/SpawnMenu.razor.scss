@@ -15,7 +15,7 @@ spawnmenu {
     z-index: 10;
     backdrop-filter: blur( 10px ) contrast( 50% ) saturate( 50% ) brightness( 10% );
 
-    .left {
+    > .left {
         flex-grow: 1;
         flex-direction: column;
         position: relative;
@@ -37,7 +37,7 @@ spawnmenu {
         }
     }
 
-    .right {
+    > .right {
         margin-left: 50px;
         flex-direction: column;
         min-width: 400px;
@@ -159,7 +159,7 @@ spawnmenu {
     }
 
     .canvas {
-        position: relative;
+        //position: relative;
         overflow: scroll;
         width: 100%;
         flex-grow: 1;
@@ -263,4 +263,8 @@ spawnmenu {
             border-radius: 0 5px 5px 0;
         }
     }
+}
+
+.flex-column {
+    flex-direction: column;
 }

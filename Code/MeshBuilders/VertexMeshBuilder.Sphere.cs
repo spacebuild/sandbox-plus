@@ -74,7 +74,7 @@ namespace Sandbox
 		
 			mesh.CreateVertexBuffer<MeshVertex>( vertexBuilder.vertices.Count, MeshVertex.Layout, vertexBuilder.vertices.ToArray() );
 			mesh.CreateIndexBuffer(indices.Count, indices);
-			mesh.SetBounds( mins, maxs );
+			mesh.Bounds = new BBox( mins, maxs );
 
 			var modelBuilder = new ModelBuilder();
 			modelBuilder.AddMesh( mesh );
@@ -88,7 +88,7 @@ namespace Sandbox
 			return key;
 		}
 
-		[ClientRpc]
+		[Rpc.Owner]
 		public static void CreateSphereModelClient( float radius, int numSegments, int texSize/* = 64*/ )
 		{
 			CreateSphereModel(radius, numSegments, texSize);
@@ -99,20 +99,19 @@ namespace Sandbox
 			return CreateSphereModel(radius, numSegments, texSize);
 		}
 		
-		[ConCmd.Server( "spawn_dynsphere" )]
+		[ConCmd( "spawn_dynsphere" )]
 		public static void SpawnSphere( float radius, int numSegments = 16, int texSize = 100 )
 		{
-			if ( ConsoleSystem.Caller == null )
-				return;
-			
 			var modelId = CreateSphere(radius, numSegments, texSize);
 			
 			var entity = SpawnEntity( modelId );
-			SandboxPlayer pawn = ConsoleSystem.Caller.Pawn as SandboxPlayer;
-			TraceResult trace = Trace.Ray( pawn.EyePosition, pawn.EyePosition + pawn.EyeRotation.Forward * 5000.0f ).UseHitboxes().Ignore( pawn ).Run();
+			Player player = Player.FindLocalPlayer();
+			GameObject pawn = player.Controller.GameObject;
+			Transform eye = player.EyeTransform;
+			SceneTraceResult trace = pawn.Scene.Trace.Ray(eye.Position, eye.Position + eye.Forward * 5000.0f ).UseHitboxes().IgnoreGameObject(pawn).Run();
 
-			entity.Position = trace.EndPosition + trace.Normal;
-			Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
+			entity.WorldPosition = trace.EndPosition + trace.Normal;
+			// Event.Run( "entity.spawned", entity, ConsoleSystem.Caller.Pawn );
 		}
 	}
 }
