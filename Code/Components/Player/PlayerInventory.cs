@@ -71,6 +71,24 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			ActiveWeapon.GameObject.Enabled = true;
 	}
 
+	[ConCmd( "weapon_switch" )]
+	public static void SwitchWeapon( string weaponClassName )
+	{
+		var player = Player.FindLocalPlayer();
+		if ( !player.IsValid() || player.Inventory is null )
+			return;
+
+		for ( int i = 0; i < player.Inventory.Weapons.Count; i++ )
+		{
+			var entity = player.Inventory.GetSlot( i );
+			if ( !entity.IsValid() ) continue;
+			if ( TypeLibrary.GetType(entity.GetType()).ClassName != weaponClassName ) continue;
+
+			player.Inventory.SetActiveSlot( i );
+			return;
+		}
+	}
+
 	public BaseWeapon GetSlot( int i )
 	{
 		if ( Weapons.Count <= i ) return null;
