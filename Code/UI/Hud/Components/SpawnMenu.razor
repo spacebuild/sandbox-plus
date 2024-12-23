@@ -17,8 +17,10 @@
     public Panel ToolPanel { get; private set; }
     public ButtonGroup SpawnMenuLeftTabs  { get; private set; }
     public Panel SpawnMenuLeftBody { get; private set; }
-
+    public bool IgnoreMenuButton = false;
+    private bool IsOpen = false;
     private bool isSearching;
+    private bool menuWasPressed = false;
 
     public SpawnMenu()
     {
@@ -36,10 +38,10 @@
                 modelList = body.AddChild<ModelList>();
                 tabs.SelectedButton = tabs.AddButtonActive("#spawnmenu.modellist", (b) => modelList.SetClass("active", b));
 
-                var ents = body.AddChild<EntityList>();
+                // var ents = body.AddChild<EntityList>();
                 // tabs.AddButtonActive("#spawnmenu.entities", (b) => ents.SetClass("active", b));
 
-                var npclist = body.AddChild<NpcList>();
+                // var npclist = body.AddChild<NpcList>();
                 // tabs.AddButtonActive("#spawnmenu.npclist", (b) => npclist.SetClass("active", b));
 
                 var props = body.AddChild<SpawnList>();
@@ -70,13 +72,13 @@
         }
     }
 
-    void RebuildToolList()
+    public void RebuildToolList()
     {
         toollist.DeleteChildren(true);
 
-        foreach (var entry in TypeLibrary.GetTypes<BaseTool>())
+        foreach (var entry in TypeLibrary.GetTypes<BaseTool>().OrderBy(( x ) => x.Title))
         {
-            if (entry.Name == "BaseTool")
+            if (entry.Name.StartsWith("Base"))
                 continue;
 
             var button = toollist.Add.Button(entry.Title);
@@ -119,6 +121,19 @@
 
     public override void Tick()
     {
+        if (!IgnoreMenuButton)
+        {
+            if (Input.Pressed("menu"))
+            {
+                IsOpen = true;
+            }
+            if (menuWasPressed && !Input.Down("menu"))
+            {
+                IsOpen = false;
+            }
+        }
+        menuWasPressed = Input.Down("menu");
+
         if (modelList.SearchInput.HasFocus)
         {
             isSearching = true;
@@ -131,6 +146,6 @@
         if (isSearching)
             return;
 
-        SetClass("spawnmenuopen", Input.Down("menu"));
+        SetClass("spawnmenuopen", IsOpen);
     }
 }

@@ -82,6 +82,7 @@ public class ToolGun : BaseWeapon
 		CurrentTool = Components.Get<BaseTool>();
 		CurrentTool.Owner = Owner;
 		CurrentTool.Parent = this;
+		CurrentTool.Activate();
 	}
 
 	public SceneTraceResult TraceTool( Vector3 start, Vector3 end, float radius = 2.0f )

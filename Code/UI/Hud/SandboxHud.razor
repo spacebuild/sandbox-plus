@@ -1,14 +1,56 @@
 @using Sandbox.UI
 
 @inherits PanelComponent
+@implements IHotloadManaged
 
 <root>
-    <Chat />
-    <KillFeed />
-    <Scoreboard T="ScoreboardEntry" />
-    <Health />
-    <CurrentTool />
-    <SpawnMenu />
-    <Crosshair />
-    <InventoryBar />
+	<Chat />
+	<KillFeed />
+	<Scoreboard T="ScoreboardEntry" />
+	<Health />
+	<CurrentTool />
+	<SpawnMenu />
+	<Crosshair />
+	<InventoryBar />
 </root>
+
+
+@code
+{
+	public static SandboxHud Instance { get; protected set; }
+
+	public SandboxHud()
+	{
+		Instance = this;
+
+		// Event.Run("sandbox.hud.loaded");
+	}
+
+	[Rpc.Owner]
+	public static void HotReloadTool()
+	{
+		CurrentTool.GetCurrentTool()?.Activate();
+	}
+
+	void IHotloadManaged.Persisted()
+	{
+		// unfortunately this is only called if SandboxHud.razor itself is modified, so this barely works.
+		// Is there a better way to detect Event.Hotload in Scene system? https://github.com/Facepunch/sbox-issues/issues/6593 suggests not yet...
+		OnReloaded();
+	}
+
+	//[Event( "package.mounted" )]
+	//[Event.Hotload]
+	private void OnReloaded()
+	{
+		Log.Info("SandboxHud.OnReloaded");
+		SpawnMenu.Instance?.RebuildToolList();
+		HotReloadTool();
+	}
+
+	[ConCmd("reload_hud")]
+	public static void ReloadHud()
+	{
+		Instance?.OnReloaded();
+	}
+}

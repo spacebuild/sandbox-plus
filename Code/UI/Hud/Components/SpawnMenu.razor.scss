@@ -75,7 +75,9 @@ spawnmenu {
 
             .inspector {
                 // background-color: rgba( #111, 0.7 );
-                flex-grow: 1;
+                color: #aaa;
+                flex-direction: column;
+                width: 350px;
                 margin-left: 5px;
                 border-radius: 0 3px 3px 0;
             }

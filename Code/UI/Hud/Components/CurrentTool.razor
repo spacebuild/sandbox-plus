@@ -23,11 +23,11 @@
             var display = DisplayInfo.For(tool);
 
             Title.Text = display.Name;
-            Description.Text = display.Description;
+            Description.Text = tool.Description ?? display.Description;
         }
     }
 
-    BaseTool GetCurrentTool()
+    public static BaseTool GetCurrentTool()
     {
         var player = Player.FindLocalPlayer();
         if (player == null) return null;
@@ -39,4 +39,11 @@
 
         return tool?.CurrentTool;
     }
+
+	[Rpc.Owner]
+	public static void CreateToolPanel()
+	{
+		SpawnMenu.Instance?.ToolPanel?.DeleteChildren(true);
+		GetCurrentTool()?.CreateToolPanel();
+	}
 }
