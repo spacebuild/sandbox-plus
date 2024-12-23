@@ -1,0 +1,14 @@
+{
+	"UI": false,
+	"Volume": 0.200000,
+	"VolumeRandom": 0,
+	"Pitch": 1.000000,
+	"PitchRandom": 0,
+	"Decibels": 60,
+	"Sounds":
+	[
+		"sounds/kenney/ui/drop_001.vsnd"
+	],
+	"MaximumDistance": 1000.000000,
+	"MinimumDistance": 0.000000
+}

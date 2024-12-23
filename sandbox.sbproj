@@ -1,0 +1,25 @@
+{
+  "Title": "SandboxPlus",
+  "Type": "game",
+  "Org": "wiremod",
+  "Ident": "sandboxplus",
+  "Schema": 1,
+  "IncludeSourceFiles": false,
+  "Resources": "/menu/*\n*.vmdl_c.png\nentity/*.png\n*.spawnlist",
+  "PackageReferences": [],
+  "EditorReferences": null,
+  "IsWhitelistDisabled": false,
+  "Metadata": {
+    "MaxPlayers": 32,
+    "MinPlayers": 1,
+    "CsProjName": "",
+    "ControlModes": {},
+    "LaunchMode": "Normal",
+    "StartupScene": "scenes/menu.scene",
+    "MapStartupScene": "scenes/game.scene",
+    "ParentPackage": "",
+    "Summary": "Create and play in your own sandbox mode.",
+    "Description": "This game lets you spawn props, and constrain them into cars and forts. It\u0027s like Garry\u0027s Mod.",
+    "DedicatedServerStartupScene": "scenes/game.scene"
+  }
+}
