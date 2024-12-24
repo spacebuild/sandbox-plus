@@ -35,7 +35,7 @@ public partial class MoveModeSwim : MoveMode
 		// jump when leaving the water
 		if ( Input.Down( "Jump" ) )
 		{
-			Controller.Jump( Vector3.Up * 300 );
+			Controller.Jump( Controller.GetUpDirection() * 300 );
 		}
 	}
 
@@ -74,7 +74,7 @@ public partial class MoveModeSwim : MoveMode
 	{
 		if ( Input.Down( "jump" ) )
 		{
-			input += Vector3.Up;
+			input += Controller.GetUpDirection();
 		}
 
 		return base.UpdateMove( eyes, input );

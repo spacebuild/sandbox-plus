@@ -8,6 +8,8 @@ public sealed partial class PlayerController : Component
 	[Property, Feature( "Input" )] public float DuckedSpeed { get; set; } = 70;
 	[Property, Feature( "Input" )] public float JumpSpeed { get; set; } = 300;
 	[Property, Feature( "Input" )] public float DuckedHeight { get; set; } = 36;
+	
+	[Property, Feature( "Input" )]public Angles LookInput { get; protected set; }
 
 	/// <summary>
 	/// Allows to player to interact with things by "use"ing them. 
@@ -43,6 +45,7 @@ public sealed partial class PlayerController : Component
 
 	void InputMove()
 	{
+		LookInput = (LookInput + Input.AnalogLook).Normal;
 		var rot = EyeAngles.ToRotation();
 		WishVelocity = Mode.UpdateMove( rot, Input.AnalogMove );
 	}
@@ -55,7 +58,7 @@ public sealed partial class PlayerController : Component
 		if ( JumpSpeed <= 0 ) return;
 
 		timeSinceJump = 0;
-		Jump( Vector3.Up * JumpSpeed );
+		Jump( GetUpDirection() * JumpSpeed );
 		OnJumped();
 	}
 
@@ -102,9 +105,9 @@ public sealed partial class PlayerController : Component
 			// if we're not on the ground, keep out head in the same position
 			if ( !IsOnGround )
 			{
-				WorldPosition += Vector3.Up * unduckDelta;
+				WorldPosition += GetUpDirection() * unduckDelta;
 				Transform.ClearInterpolation();
-				bodyDuckOffset = Vector3.Up * -unduckDelta;
+				bodyDuckOffset = GetUpDirection() * -unduckDelta;
 			}
 		}
 		else

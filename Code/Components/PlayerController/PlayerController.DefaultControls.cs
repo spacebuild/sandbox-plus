@@ -33,6 +33,7 @@ public sealed partial class PlayerController : Component
 	protected override void OnUpdate()
 	{
 		UpdateGroundEyeRotation();
+		SimulateRotation();
 
 		if ( Scene.IsEditor )
 			return;
@@ -79,7 +80,7 @@ public sealed partial class PlayerController : Component
 
 	void UpdateHeadroom()
 	{
-		var tr = TraceBody( WorldPosition, WorldPosition + Vector3.Up * 100, 0.75f );
+		var tr = TraceBody( WorldPosition, WorldPosition + GetUpDirection() * 100, 0.75f );
 		Headroom = tr.Distance;
 	}
 

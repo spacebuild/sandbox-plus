@@ -67,7 +67,7 @@ public sealed partial class PlayerController : Component
 		//
 		{
 			from = result.EndPosition;
-			var uppoint = from + Vector3.Up * maxDistance;
+			var uppoint = from + GetUpDirection() * maxDistance;
 
 			// move up 
 			result = TraceBody( from, uppoint, radiusScale );
@@ -111,7 +111,7 @@ public sealed partial class PlayerController : Component
 		{
 			var dist = result.Distance;
 			var top = result.EndPosition;
-			var bottom = result.EndPosition + Vector3.Down * maxDistance;
+			var bottom = result.EndPosition + GetDownDirection() * maxDistance;
 
 			result = TraceBody( top, bottom, radiusScale );
 
@@ -127,7 +127,7 @@ public sealed partial class PlayerController : Component
 				return;
 
 			_didstep = true;
-			_stepPosition = result.EndPosition + Vector3.Up * _skin;
+			_stepPosition = result.EndPosition + GetUpDirection() * _skin;
 
 			Body.WorldPosition = _stepPosition;
 

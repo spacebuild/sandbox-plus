@@ -1,4 +1,6 @@
 ﻿
+using Sandbox.Gravitational.Components;
+
 namespace Sandbox.Movement;
 
 /// <summary>
@@ -11,6 +13,8 @@ public abstract partial class MoveMode : Component
 
 	[RequireComponent]
 	public PlayerController Controller { get; set; }
+	
+	
 
 	/// <summary>
 	/// Highest number becomes the new control mode

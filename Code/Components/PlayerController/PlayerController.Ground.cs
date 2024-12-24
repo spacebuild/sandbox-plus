@@ -49,7 +49,7 @@ public sealed partial class PlayerController : Component
 		var currentPosition = WorldPosition;
 
 		float radiusScale = 1.0f;
-		var tr = TraceBody( currentPosition + Vector3.Up * 1, currentPosition + Vector3.Down * stepSize, radiusScale, 0.5f );
+		var tr = TraceBody( currentPosition + GetUpDirection() * 1, currentPosition + GetDownDirection() * stepSize, radiusScale, 0.5f );
 
 		while ( tr.StartedSolid )
 		{
@@ -57,7 +57,7 @@ public sealed partial class PlayerController : Component
 			if ( radiusScale < 0.7f )
 				return;
 
-			tr = TraceBody( currentPosition + Vector3.Up * 1, currentPosition + Vector3.Down * stepSize, radiusScale, 0.5f );
+			tr = TraceBody( currentPosition + GetUpDirection() * 1, currentPosition + GetDownDirection() * stepSize, radiusScale, 0.5f );
 		}
 
 		if ( tr.StartedSolid )
@@ -67,7 +67,7 @@ public sealed partial class PlayerController : Component
 
 		if ( tr.Hit )
 		{
-			var targetPosition = tr.EndPosition + Vector3.Up * _skin;
+			var targetPosition = tr.EndPosition + GetUpDirection() * _skin;
 			var delta = currentPosition - targetPosition;
 			if ( delta == Vector3.Zero ) return;
 
@@ -110,8 +110,8 @@ public sealed partial class PlayerController : Component
 			return;
 		}
 
-		var from = WorldPosition + Vector3.Up * 4;
-		var to = WorldPosition + Vector3.Down * 2;
+		var from = WorldPosition + GetUpDirection() * 4;
+		var to = WorldPosition + GetDownDirection() * 2;
 
 		float radiusScale = 1;
 		var tr = TraceBody( from, to, radiusScale, 0.5f );

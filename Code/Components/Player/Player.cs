@@ -7,7 +7,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	{
 		return Game.ActiveScene.GetAllComponents<Player>().Where( x => !x.IsProxy ).FirstOrDefault();
 	}
-
+	
 	[RequireComponent] public PlayerController Controller { get; set; }
 	[RequireComponent] public PlayerInventory Inventory { get; set; }
 

@@ -27,7 +27,7 @@ public partial class MoveModeNoclip : MoveMode
 
 		if ( Input.Down( "jump" ) )
 		{
-			vel += Vector3.Up * 1;
+			vel += Controller.GetUpDirection() * 1;
 		}
 
 		vel = vel.Normal * 20000;

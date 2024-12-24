@@ -48,7 +48,7 @@ public partial class MoveModeWalk : MoveMode
 
 	public override bool IsStandableSurace( in SceneTraceResult result )
 	{
-		if ( Vector3.GetAngle( Vector3.Up, result.Normal ) > GroundAngle )
+		if ( Vector3.GetAngle( Controller.GetUpDirection(), result.Normal ) > GroundAngle )
 			return false;
 
 		return true;
