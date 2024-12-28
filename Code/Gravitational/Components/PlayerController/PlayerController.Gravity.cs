@@ -5,21 +5,21 @@ namespace Sandbox;
 public sealed partial class PlayerController
 {
 	
-	public Vector3 GetGravityDirection()
+	public Vector3 GetGravityDirection(float multiplier = 1)
 	{
 		var gravity = GetComponent<GravitationalAwareComponent>();
-		if ( gravity is { Enabled: true } )
+		if ( gravity is { CustomGravityEnabled: true } )
 		{
-			return gravity.GravityDirection;
+			return gravity.GravityDirection * multiplier;
 		}
-		return Vector3.Down;
+		return Vector3.Down * multiplier;
 	}
 
-	public Vector3 GetDownDirection() => GetGravityDirection();
+	public Vector3 GetDownDirection(float multiplier = 1) => GetGravityDirection(multiplier);
 
-	public Vector3 GetUpDirection()
+	public Vector3 GetUpDirection(float multiplier = 1)
 	{
-		return -GetGravityDirection();
+		return -GetGravityDirection(multiplier);
 	}
 	
 }

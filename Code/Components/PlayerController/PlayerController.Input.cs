@@ -9,7 +9,7 @@ public sealed partial class PlayerController : Component
 	[Property, Feature( "Input" )] public float JumpSpeed { get; set; } = 300;
 	[Property, Feature( "Input" )] public float DuckedHeight { get; set; } = 36;
 	
-	[Property, Feature( "Input" )]public Angles LookInput { get; protected set; }
+	[Property, Feature( "Input" )] public Angles LookInput { get; set; }
 
 	/// <summary>
 	/// Allows to player to interact with things by "use"ing them. 
@@ -45,7 +45,10 @@ public sealed partial class PlayerController : Component
 
 	void InputMove()
 	{
-		LookInput = (LookInput + Input.AnalogLook).Normal;
+		var lookInput = (LookInput + Input.AnalogLook).Normal;
+
+		// Since we're a FPS game, let's clamp the player's pitch between -90, and 90.
+		LookInput = lookInput.WithPitch( lookInput.pitch.Clamp( -90f, 90f ) );
 		var rot = EyeAngles.ToRotation();
 		WishVelocity = Mode.UpdateMove( rot, Input.AnalogMove );
 	}
@@ -58,7 +61,7 @@ public sealed partial class PlayerController : Component
 		if ( JumpSpeed <= 0 ) return;
 
 		timeSinceJump = 0;
-		Jump( GetUpDirection() * JumpSpeed );
+		Jump( GetUpDirection(JumpSpeed) );
 		OnJumped();
 	}
 
@@ -105,9 +108,9 @@ public sealed partial class PlayerController : Component
 			// if we're not on the ground, keep out head in the same position
 			if ( !IsOnGround )
 			{
-				WorldPosition += GetUpDirection() * unduckDelta;
+				WorldPosition += GetUpDirection(unduckDelta);
 				Transform.ClearInterpolation();
-				bodyDuckOffset = GetUpDirection() * -unduckDelta;
+				bodyDuckOffset = GetUpDirection(-unduckDelta);
 			}
 		}
 		else

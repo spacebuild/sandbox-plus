@@ -35,7 +35,7 @@ public partial class MoveModeSwim : MoveMode
 		// jump when leaving the water
 		if ( Input.Down( "Jump" ) )
 		{
-			Controller.Jump( Controller.GetUpDirection() * 300 );
+			Controller.Jump( Controller.GetUpDirection(300) );
 		}
 	}
 

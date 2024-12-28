@@ -42,8 +42,8 @@ public sealed partial class PlayerController : Component
 		var radius = (BodyRadius * MathF.Sqrt( 2 )) / 2;
 
 		BodyCollider.Radius = radius;
-		BodyCollider.Start = GetUpDirection() * (BodyHeight - BodyCollider.Radius);
-		BodyCollider.End = GetUpDirection() * (BodyCollider.Radius + feetHeight - BodyCollider.Radius * 0.20f);
+		BodyCollider.Start = GetUpDirection(BodyHeight - BodyCollider.Radius);
+		BodyCollider.End = GetUpDirection(BodyCollider.Radius + feetHeight - BodyCollider.Radius * 0.20f);
 		BodyCollider.Friction = 0.0f;
 		BodyCollider.Enabled = true;
 

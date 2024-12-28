@@ -13,7 +13,7 @@ public sealed partial class PlayerController
 	private void SimulateRotation()
 	{
 		var gravity = GetComponent<GravitationalAwareComponent>();
-		if ( gravity is { Enabled: true } )
+		if ( gravity is { CustomGravityEnabled: true })
 		{
 			// Base rotation
 			var upDirection = GetUpDirection();

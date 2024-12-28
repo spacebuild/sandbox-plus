@@ -22,7 +22,7 @@ public sealed partial class PlayerController : Component
 	public void PlayFootstepSound( Vector3 worldPosition, float volume, int foot )
 	{
 		var tr = Scene.Trace
-			.Ray( worldPosition + GetUpDirection() * 10, worldPosition + GetDownDirection() * 20 )
+			.Ray( worldPosition + GetUpDirection(10), worldPosition + GetDownDirection(20) )
 			.IgnoreGameObjectHierarchy( GameObject )
 			.Run();
 

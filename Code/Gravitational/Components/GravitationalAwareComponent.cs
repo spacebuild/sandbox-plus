@@ -17,10 +17,12 @@ namespace Sandbox.Gravitational.Components
     
 		[Sync] 
 		public Vector3 GravityDirection { get; protected set; }
-		
+
+
+		public bool CustomGravityEnabled { get; protected set; }
 		
 
-		public GravitationalAwareComponent() { }
+		public GravitationalAwareComponent() => CheckEnabled();
 
 		public void DisableGravity()
 		{
@@ -67,11 +69,21 @@ namespace Sandbox.Gravitational.Components
 
 		protected override void OnFixedUpdate()
 		{
-			this.Enabled = GravitationalEnvironmentComponent.Instances > 0;
+			CheckEnabled();
+		}
+
+		private void CheckEnabled()
+		{
+			Enabled = GravitationalEnvironmentComponent.Instances > 0;
+			CustomGravityEnabled = Enabled;
 		}
 
 		public void PostPhysicsStep()
 		{
+			if ( GravitationalEnvironmentComponent.Instances == 0 )
+			{
+				return;
+			}
 			var active = GravitationalUtils.getActiveEnvironment( Environments, this );
 			if ( active != null )
 			{
@@ -101,8 +113,8 @@ namespace Sandbox.Gravitational.Components
 				DisableGravity();
 			}
 		}
-		
-		public void EnableGravity(GravitationalEnvironmentComponent targetEntity, float gravityScale )
+
+		private void EnableGravity(GravitationalEnvironmentComponent targetEntity, float gravityScale )
 		{
 			CurrentEnvironmentComponent = targetEntity;
 			Gravity = Scene.PhysicsWorld.Gravity * gravityScale;
